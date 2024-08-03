@@ -1,12 +1,13 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_PREREQ([2.69])
-AC_INIT([C Compiler], [0.1], [ceneblock@users.noreply.github.com]
+AC_PREREQ([2.72])
+AC_INIT([C Compiler],[0.1],[ceneblock@users.noreply.github.com])
 AC_CONFIG_SRCDIR([src/main.cpp])
 AM_INIT_AUTOMAKE([subdir-objects])
 AC_CONFIG_HEADERS([config.h])
-AC_OUTPUT(Makefile src/Makefile)
+AC_CONFIG_FILES([Makefile src/Makefile])
+AC_OUTPUT
 
 #Muk up the CFLAGS variable
 : ${CFLAGS="-g"}
