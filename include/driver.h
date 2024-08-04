@@ -11,33 +11,48 @@ namespace frontend
 {
   class driver
   {
-    public:
-      driver();
-  
-      void addOptions(std::string options);
-
-      void addArgv(char *argv[]);
-
-      bool parse();
     protected:
-      
-      std::string options;
+      //forward declaration
       typedef std::string description;
 
       struct optionMapValue
       {
         option o;
         description d;
-        //std::stringstream val;
+        std::stringstream val;
         optionMapValue(option o, description d):
-          o(o), d(d)
+        o(o), d(d)
         {
-          //val.str(std::string()); //clear it to nothing
+          val.str(std::string()); //clear it to nothing
+        }
+        optionMapValue(const optionMapValue &source):
+          o(source.o), d(source.d)
+        {
+          val << source.val.rdbuf();
         }
       };
+
+    public:
+      driver();
+  
+      void addOptions(std::string options);
+
+      void addArgs(int argc, char *argv[]);
+
+      bool parse();
+
+      std::map<char, std::stringstream> getParseResults();
+
+      std::map<char, optionMapValue> &getOptionMap() { return optionMap; }
+
+    protected:
+      
+      std::string options;
       
       //using a char so switch(optionMap[X].first)
-      const std::map<char, optionMapValue> optionMap =
+      //Not making this const so optionMapValue.val can store something, but
+      //also don't be stupid
+      std::map<char, optionMapValue> optionMap =
       {
         {'c', optionMapValue({"codegen", no_argument, 0, 'c'}, "Perform lexical parsing, and assembly generation, but stop before code emission")},
         {'h', optionMapValue({"help", no_argument, 0, 'h'}, "Prints this help message and exits")},
@@ -45,10 +60,13 @@ namespace frontend
         {'p', optionMapValue({"parse", no_argument, 0, 'p'}, "Run the lexer and parser, but stop before assembly generation")}
       };
 
-      std::vector<option> long_options;
+      std::vector<option> longOptions;
 
+      int argc;
       char **argv; //args. Saving for potential debugging purposes
       std::string getopt_string = "";
+      //TODO: make this a parameter
+      bool DEBUG = true;
   };
 }
 #endif
